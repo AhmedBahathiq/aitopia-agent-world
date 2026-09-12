@@ -71,7 +71,7 @@ button { color: inherit; }
 .experience-grid { max-width: 1640px; margin: auto; display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 16px; }
 .map-panel, .event-panel { direction: rtl; border: 1px solid var(--border); border-radius: 24px; overflow: hidden; background: #0a2124d9; box-shadow: 0 24px 80px #00101266, inset 0 1px #ffffff09; }
 .map-panel { position: relative; min-height: calc(100vh - 160px); }
-.map-image { position: absolute; inset: 0; overflow: hidden; background: #0d4d4c url('/island-world-v2.png') center center / cover no-repeat; image-rendering: auto; }
+.map-image { position: absolute; inset: 0; overflow: hidden; background: #0d4d4c url('/island-world-v2.webp') center center / cover no-repeat; image-rendering: auto; }
 .map-vignette { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, #02191b26, transparent 25%, transparent 63%, #021719bb), radial-gradient(circle at 52% 45%, transparent 45%, #00111373 115%); }
 .zone-label { position: absolute; display: flex; align-items: center; gap: 6px; padding: 6px 9px; color: #f1f6f2; background: #051c1ec7; border: 1px solid #ffffff26; border-radius: 999px; font-size: .73rem; backdrop-filter: blur(9px); box-shadow: 0 7px 22px #00101266; }
 .zone-label.spring { left: 17%; top: 39%; }

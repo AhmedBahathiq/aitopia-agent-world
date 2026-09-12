@@ -10,7 +10,7 @@ The default world begins with three adults — one man and two women. Each chara
 
 The audience does not control the characters. It watches their lives unfold through a public Arabic RTL interface, a live island map, character profiles, and a chronological event feed.
 
-![Aitopia island simulation map](./public/island-world-v2.png)
+![Aitopia island simulation map](./public/island-world-v2.webp)
 
 ## Why this project exists
 
@@ -55,7 +55,7 @@ The repository is split into:
 - `app/` and `components/` — the public observer experience.
 - `shared/` — contracts, simulation rules, public-data projection, and knowledge isolation.
 - `worker/` — Cloudflare Worker, Agents SDK world runtime, Durable Object state, D1 index, signed operator routes, schedules, and tests.
-- `public/island-world-v2.png` — the original high-resolution island map.
+- `public/island-world-v2.webp` — the optimized island map included with the open-source build.
 
 Each season is represented by one `WorldAgent`. A non-overlapping pulse advances the environment every 30 seconds. Model calls occur only when a character faces a meaningful need, encounter, crisis, or completed goal.
 
@@ -156,4 +156,3 @@ Created and maintained by **Ahmed Bahathiq**.
 ## License
 
 Aitopia is available under the [MIT License](./LICENSE).
-
