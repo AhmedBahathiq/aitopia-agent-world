@@ -1,0 +1,47 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "aitopia-agent-world",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-11",
+  "compatibility_flags": ["nodejs_compat"],
+  "durable_objects": {
+    "bindings": [
+      { "name": "WorldAgent", "class_name": "WorldAgent" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["WorldAgent"] }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "agent-world-seasons",
+      "database_id": "replace-with-your-d1-database-id",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "PUBLIC_RATE_LIMITER",
+      "namespace_id": "3101",
+      "simple": { "limit": 180, "period": 60 }
+    },
+    {
+      "name": "ADMIN_RATE_LIMITER",
+      "namespace_id": "3102",
+      "simple": { "limit": 30, "period": 60 }
+    }
+  ],
+  "vars": {
+    "SIMULATION_MODEL": "gpt-5.6-luna",
+    "ALLOWED_ORIGIN": "http://localhost:3000",
+    "MAX_MODEL_CALLS_PER_DAY": "300",
+    "MAX_TOTAL_TOKENS_PER_DAY": "300000",
+    "SIMULATION_MODE": "openai"
+  },
+  "observability": {
+    "enabled": true,
+    "logs": { "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.05 }
+  }
+}

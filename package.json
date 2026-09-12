@@ -1,0 +1,44 @@
+{
+  "name": "aitopia-agent-world",
+  "version": "0.1.0",
+  "description": "A real-time autonomous multi-agent society and survival simulation.",
+  "author": "Ahmed Bahathiq",
+  "license": "MIT",
+  "homepage": "https://aitopia.ahmedbahathiq.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AhmedBahathiq/aitopia-agent-world.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AhmedBahathiq/aitopia-agent-world/issues"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint app components shared",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lucide-react": "^1.31.0",
+    "next": "16.3.5",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.2.1",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.3.5",
+    "tailwindcss": "4.2.1",
+    "typescript": "5.9.3"
+  },
+  "type": "module"
+}

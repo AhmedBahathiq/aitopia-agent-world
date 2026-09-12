@@ -1,0 +1,31 @@
+{
+  "name": "@agent-world/engine",
+  "version": "0.1.0",
+  "description": "Persistent Cloudflare engine for the Aitopia agent society simulation.",
+  "author": "Ahmed Bahathiq",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AhmedBahathiq/aitopia-agent-world.git",
+    "directory": "worker"
+  },
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --config ./wrangler.jsonc",
+    "deploy": "wrangler deploy --config ./wrangler.jsonc",
+    "types": "wrangler types --config ./wrangler.jsonc",
+    "check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "agents": "0.22.0",
+    "zod": "4.6.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20260911.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11",
+    "wrangler": "4.131.1"
+  }
+}

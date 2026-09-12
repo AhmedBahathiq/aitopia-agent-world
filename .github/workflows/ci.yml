@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install viewer dependencies
+        run: npm ci
+      - name: Check viewer
+        run: npm run lint && npm run check && npm run build
+      - name: Install engine dependencies
+        working-directory: worker
+        run: npm ci
+      - name: Test engine
+        working-directory: worker
+        run: npm run check && npm test
