@@ -2,15 +2,17 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "aitopia-agent-world",
   "main": "src/index.ts",
-  "compatibility_date": "2026-09-11",
+  "compatibility_date": "2026-09-14",
   "compatibility_flags": ["nodejs_compat"],
   "durable_objects": {
     "bindings": [
-      { "name": "WorldAgent", "class_name": "WorldAgent" }
+      { "name": "WorldAgent", "class_name": "WorldAgent" },
+      { "name": "PublicStreamAgent", "class_name": "PublicStreamAgent" }
     ]
   },
   "migrations": [
-    { "tag": "v1", "new_sqlite_classes": ["WorldAgent"] }
+    { "tag": "v1", "new_sqlite_classes": ["WorldAgent"] },
+    { "tag": "v2-public-stream", "new_sqlite_classes": ["PublicStreamAgent"] }
   ],
   "d1_databases": [
     {
@@ -18,6 +20,12 @@
       "database_name": "agent-world-seasons",
       "database_id": "replace-with-your-d1-database-id",
       "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ARCHIVE",
+      "bucket_name": "replace-with-your-r2-bucket-name"
     }
   ],
   "ratelimits": [
@@ -33,10 +41,9 @@
     }
   ],
   "vars": {
-    "SIMULATION_MODEL": "gpt-5.6-luna",
+    "SIMULATION_MODEL": "gpt-5-nano",
     "ALLOWED_ORIGIN": "http://localhost:3000",
-    "MAX_MODEL_CALLS_PER_DAY": "300",
-    "MAX_TOTAL_TOKENS_PER_DAY": "300000",
+    "INITIAL_EXPECTED_CAPACITY": "24",
     "SIMULATION_MODE": "openai"
   },
   "observability": {

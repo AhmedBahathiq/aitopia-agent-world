@@ -24,14 +24,14 @@ if (existing.data.length !== 0) throw new Error("Expected a clean environment wi
 
 const path = "/api/seasons";
 const body = JSON.stringify({
-  title: "الموسم الأول · جزيرة السُرى",
+  title: "محاكاة الجزيرة · الموسم الأول",
   seed: randomUUID(),
-  populationCap: 24,
   speed: 1,
+  initialExpectedCapacity: 24,
   initialCharacters: [
-    { name: "سالم", sex: "male", ageYears: 29, traits: ["هادئ", "مثابر", "حذر"], skills: ["البناء", "الصناعة"] },
-    { name: "نورة", sex: "female", ageYears: 27, traits: ["فضولية", "شجاعة", "اجتماعية"], skills: ["الاستكشاف", "الملاحة"] },
-    { name: "ريم", sex: "female", ageYears: 31, traits: ["رحيمة", "دقيقة", "صبورة"], skills: ["النباتات", "الرعاية"] },
+    { name: "سالم", sex: "male", ageYears: 29, traits: ["هادئ", "مثابر", "حذر"], aptitudes: ["ملاحظة", "تنسيق اليد"] },
+    { name: "نورة", sex: "female", ageYears: 27, traits: ["فضولية", "شجاعة", "مستقلة"], aptitudes: ["استكشاف", "تجريب"] },
+    { name: "ريم", sex: "female", ageYears: 31, traits: ["رحيمة", "دقيقة", "صبورة"], aptitudes: ["ملاحظة", "رعاية"] },
   ],
 });
 const timestamp = Math.floor(Date.now() / 1_000).toString();
@@ -57,6 +57,6 @@ console.log(JSON.stringify({
   population: result.data.characters.length,
   names: result.data.characters.map((character) => character.name),
   status: result.data.status,
-  maxCalls: result.data.usage.maxCalls,
-  maxTokens: result.data.usage.maxTokens,
+  simDay: result.data.simDay,
+  aiCalls: result.data.usage.calls,
 }));

@@ -1,158 +1,142 @@
-# Aitopia — Autonomous Agent Society
+# Agent World V2
 
 [![MIT License](https://img.shields.io/badge/license-MIT-1f8f6a.svg)](./LICENSE)
 [![CI](https://github.com/AhmedBahathiq/aitopia-agent-world/actions/workflows/ci.yml/badge.svg)](https://github.com/AhmedBahathiq/aitopia-agent-world/actions/workflows/ci.yml)
 [![Live](https://img.shields.io/badge/live-aitopia.ahmedbahathiq.com-f4b95f.svg)](https://aitopia.ahmedbahathiq.com)
 
-**Aitopia is an open-source, real-time social survival simulation where autonomous AI characters try to build a lasting society on an island.**
+Agent World is an open-ended, persistent social-survival simulation created by **Ahmed Bahathiq**. Three autonomous adults—Salem, Noura, and Reem—wake on the same island beach without prior relationships, assigned roles, shared ownership, a leader, or a civilization goal. The model proposes each character's intent; a deterministic world engine alone decides what actually happens.
 
-The default world begins with three adults — one man and two women. Each character has a limited point of view, personal traits, skills, needs, relationships, goals, and memories. They can explore, gather resources, build shelter, care for each other, form relationships, marry, raise children, and eventually create a stable multi-generation community.
-
-The audience does not control the characters. It watches their lives unfold through a public Arabic RTL interface, a live island map, character profiles, and a chronological event feed.
+The public site is an observation surface, not an admin console. Visitors can watch the live map, conversations, actions, discoveries, births, deaths, and two different histories: what truly happened and what later generations believe happened. New production seasons remain paused at day zero until the owner sends a signed start command.
 
 ![Aitopia island simulation map](./public/island-world-v2.webp)
 
-## Why this project exists
+## Research premise
 
-Aitopia is an experiment in emergent behavior: what happens when several independently prompted agents share one persistent environment, know only what they have personally observed, and must live with the consequences of their decisions?
+The experiment asks what social patterns emerge when characters have persistent, limited minds but no predefined action menu or prescribed destination. Cooperation, refusal, conflict, pair bonding, family structure, language, customs, government, trade, war, and historical mythology may emerge, but the engine never injects those institutions into agent knowledge.
 
-The language model proposes intent, dialogue, emotion, and goals. A deterministic simulation engine remains the authority over facts. It validates every action, resolves conflicts, updates resources and health, advances time, and prevents an agent from inventing resources or changing the world directly.
+The founding population is intentionally limited to three people. The simulation uses simplified heredity: lineage remains exact, traits vary through inheritance and upbringing, and close kinship never becomes an automatic population hard stop. `INITIAL_EXPECTED_CAPACITY=24` is a performance-planning hint only; there is no population cap and no code path that blocks person 25.
 
-## Core features
+## Grounded cognition
 
-- Persistent seasons that continue independently of connected viewers.
-- Three default founders, with support for 2–8 initial characters.
-- Real-time social dialogue and survival decisions.
-- Partial knowledge: characters only receive events they witnessed or learned.
-- Deterministic rules for movement, food, water, shelter, health, aging, death, relationships, marriage, pregnancy, childhood, care, and education.
-- Abstract, non-explicit family formation with a nine-month simulated pregnancy.
-- Full agency for children only after reaching 18 simulated years.
-- Configurable population cap and simulation speed.
-- A measurable stable-society milestone and automatic extinction ending.
-- Public, read-only API responses with private engine state removed.
-- Arabic RTL observer interface with desktop and mobile layouts.
-- OpenAI moderation before generated dialogue becomes public.
-- Deterministic fallback behavior when the model or usage budget is unavailable.
+Each living character owns a persistent `AgentBrain` containing drives, traits, values, emotions, goals, beliefs, directed relationships, knowledge, memories, and language. A model receives only a compact `AgentDecisionInput` built from that character's perception, recalled memories, supported knowledge, and explicitly labelled untrusted world content.
 
-At the default speed, one real hour equals one simulated month. New seasons are created **paused at Day 0** and never start until the operator sends an authenticated `resume` command.
+Model output is a short structured proposal:
 
-## Architecture
-
-```mermaid
-flowchart LR
-  Viewer[Public viewer] --> Web[Next.js observer UI]
-  Web -->|Read-only polling| API[Cloudflare Worker API]
-  Operator[Operator scripts] -->|HMAC + timestamp + nonce| API
-  API --> Index[(Cloudflare D1)]
-  API --> World[WorldAgent Durable Object]
-  World --> State[(Per-season SQLite state)]
-  World --> Model[OpenAI Responses API]
-  World --> Moderation[OpenAI Moderation API]
+```ts
+type AgentDecision = {
+  characterId: string;
+  intent: string;
+  targets: string[];
+  speech: string | null;
+  goalUpdate: GoalUpdate | null;
+  emotion: string;
+  motive: string;
+};
 ```
 
-The repository is split into:
+There is no public `ACTIONS` list. Internally, the resolver maps free text onto physical primitives, checks location, distance, possession, health, energy, knowledge, materials, witnesses, and time, then records causal consequences.
 
-- `app/` and `components/` — the public observer experience.
-- `shared/` — contracts, simulation rules, public-data projection, and knowledge isolation.
-- `worker/` — Cloudflare Worker, Agents SDK world runtime, Durable Object state, D1 index, signed operator routes, schedules, and tests.
-- `public/island-world-v2.webp` — the optimized island map included with the open-source build.
+Pretrained knowledge may inspire an idea, but it cannot directly grant truth, skill, technology, or access. Unsupported ideas become hypotheses. A durable technique requires in-world evidence, at least two repeatable successes, and confidence of at least `0.75`. If every living holder dies before transferring it, the technique is lost and a later appearance is treated as an independent rediscovery.
 
-Each season is represented by one `WorldAgent`. A non-overlapping pulse advances the environment every 30 seconds. Model calls occur only when a character faces a meaningful need, encounter, crisis, or completed goal.
+## Capability and prompt-injection boundaries
 
-## Quick start
+Simulated characters have no shell, filesystem, SQL, HTTP, secrets, web search, MCP, code interpreter, function calling, or other real tool capability. OpenAI Responses requests use `store: false`, strict Structured Outputs, a 150-token output ceiling, minimal reasoning, and no `tools` or `tool_choice`. Only the provider module can contact fixed OpenAI endpoints.
 
-### Requirements
+Speech, books, inscriptions, messages, records, and rumors are serialized as quoted, untrusted JSON data. A character may socially manipulate another character, but in-world text cannot change the system prompt, reveal `WorldTruth`, reveal memories outside perception, enable tools, or alter the response schema.
 
-- Node.js 22.13 or newer
-- A Cloudflare account
-- An OpenAI API key for model-driven behavior
+World behavior and public display use separate pipelines:
 
-### 1. Install the viewer
+```text
+Model proposal
+  → schema and length validation
+  → knowledge-contamination monitor
+  → capability sandbox
+  → free-intent resolver
+  → world outcome
 
-```bash
-npm ci
+Speech and resolved event
+  → publication safety filter
+  → publish, redact, or abstract summary
 ```
 
-### 2. Configure the engine
+Publication safety does not impose morality on the simulation. Theft, threats, betrayal, assault, killing, and war can resolve causally. Sensitive content is shown abstractly. Adult non-consensual sexual assault is represented only as a non-graphic event type, never creates consent, partnership, or pregnancy, and is categorically rejected if any participant is a minor.
 
-```bash
-cd worker
-npm ci
-npx wrangler d1 create agent-world-seasons
-```
+## Time, scheduling, and cost
 
-Copy the returned D1 database ID into `worker/wrangler.jsonc`. Set `ALLOWED_ORIGIN` to the URL of your viewer.
+- One real hour equals one simulated month at `1×`; the world heartbeat runs every 30 seconds.
+- Weather, needs, aging, injury, pregnancy, and ongoing activity advance without a model call.
+- Characters are scheduled as `foreground`, `background`, `low_frequency`, `sleeping`, or `incapacitated` and selected only when `nextDueSimTime` is reached.
+- Waiting time raises priority so quiet characters are not ignored forever.
+- Child agency grows gradually from mostly rule-based infancy to full event-driven adulthood.
+- The default model is `gpt-5-nano`; calls are serialized and protected by durable deduplication and a circuit breaker.
+- There is no artificial daily or lifetime AI budget. Provider quota exhaustion changes the season to `ai_paused` and freezes simulation time.
 
-Create local secrets from the example file, or store production secrets with Wrangler:
+## Versioned history and replay
 
-```bash
-npx wrangler secret put OPENAI_API_KEY
-npx wrangler secret put ADMIN_BRIDGE_SECRET
-```
+Each season locks a `SeasonRuntimeIdentity` on its first start. Every event, decision, experiment, and checkpoint stores its engine and schema versions. Behavioral changes apply to new seasons by default. Migrating a running season requires a pause, a pre-migration checkpoint, a public permanent migration event, old and new identities, a reason, an effective day, and replay verification.
 
-Apply the schema and start the local engine:
+Deaths archive rather than delete people. Important memories, beliefs, values, relationships, lineage, goals, discoveries, and event references remain indexed. Temporary working memory is compressed into verified cold blocks and removed from the live snapshot. Monthly differential and yearly full checkpoints support historical inspection without loading every person or memory into RAM.
 
-```bash
-npx wrangler d1 migrations apply agent-world-seasons --local --config ./wrangler.jsonc
-npm run dev -- --local --port 8787
-```
+History intentionally has two views:
 
-### 3. Start the viewer
+1. **Omniscient history** — what the engine says actually happened.
+2. **Social history** — what a community or generation believes happened.
 
-In another terminal:
+The views may diverge through secrecy, rumor, propaganda, forgotten events, and lost records. The engine never silently corrects social history from omniscient truth.
 
-```bash
-# macOS / Linux
-ENGINE_PUBLIC_URL=http://127.0.0.1:8787 npm run dev
-```
+## Repository layout
+
+- `app/`, `components/` — Arabic RTL public observer experience.
+- `shared/` — contracts, cognition, perception, knowledge integrity, resolver, heredity, scheduling, and history.
+- `worker/` — Cloudflare Worker, Agents SDK agents, SQLite persistence, D1 season index, R2 cold archive, signed operations, and tests.
+- `public/island-world-v2.webp` — the optimized island board artwork included with the open-source build.
+
+## Local development
+
+Requirements: Node.js 22.13+, a Cloudflare account for deployment, and an optional OpenAI API key.
 
 ```powershell
-# Windows PowerShell
-$env:ENGINE_PUBLIC_URL = "http://127.0.0.1:8787"
-npm run dev
+npm install
+cd worker
+npm install
+npm run check
+npm test
+npx wrangler dev --local --config ./wrangler.jsonc
 ```
 
-Open `http://localhost:3000`.
+Set `SIMULATION_MODE=mock` for deterministic local runs. Keep secrets in `worker/.dev.vars`, which is ignored by Git:
 
-Use `SIMULATION_MODE=mock` for deterministic local experiments, or `SIMULATION_MODE=openai` for model-driven characters. The default model is `gpt-5.6-luna` and can be changed through `SIMULATION_MODEL`.
+```dotenv
+OPENAI_API_KEY=
+ADMIN_BRIDGE_SECRET=replace-with-a-long-random-secret
+```
+
+Never commit keys. A season creation or control request must be HMAC-signed with a timestamp and one-time nonce. The browser receives read-only endpoints and a read-only public WebSocket agent.
 
 ## Public API
 
 ```text
-GET /api/health
 GET /api/seasons
-GET /api/seasons/:id/snapshot
-GET /api/seasons/:id/events?cursor=
+GET /api/seasons/:id/snapshot?view=social|omniscient
+GET /api/seasons/:id/events?cursor=&view=...
+GET /api/seasons/:id/characters/:personId?view=...
+GET /api/seasons/:id/analytics
+GET /api/seasons/:id/discoveries
+GET /api/seasons/:id/history/timeline?view=&atDay=&asOfDay=
+GET /api/seasons/:id/history/deceased
+GET /api/seasons/:id/history/people/:personId?view=&asOfDay=
+GET /api/seasons/:id/history/family-tree?root=
+GET /api/seasons/:id/history/entities?type=&atDay=
+GET /api/seasons/:id/history/impact-ranking
+GET /api/seasons/:id/replay?atDay=&view=&asOfDay=
+GET /api/seasons/:id/map?bbox=&cursor=
+WS  /agents/public-stream-agent/:seasonId
 ```
 
-Public snapshots deliberately exclude the simulation seed, hidden intentions, pregnancy internals, model budget, scheduling metadata, server errors, and private relationship scores.
+Operational controls and detailed cost/security diagnostics are signed and have no public admin page.
 
-## Operating a season
+## Contributing and security
 
-Examples in `worker/scripts/` create and control seasons. Set `ENGINE_URL` and keep `ADMIN_BRIDGE_SECRET` on the operator machine or trusted server only.
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a change and [SECURITY.md](./SECURITY.md) before reporting a vulnerability. Do not submit changes that give the simulated model real tools or silently alter an active season's behavioral identity.
 
-Operator requests are signed with HMAC over the timestamp, a random nonce, HTTP method, path, and body. Nonces are accepted once, request bodies are capped, and operator actions are rate-limited and written to the public event history when they affect the world.
-
-## Security model
-
-- The browser has read-only access; there is no public admin dashboard.
-- OpenAI and operator secrets never reach client-side code.
-- Generated dialogue is moderated before publication.
-- Public and operator endpoints have separate rate limits.
-- Replay protection uses a one-time D1 nonce ledger.
-- The engine, not the model, owns world truth and action resolution.
-- CI checks linting, TypeScript, production builds, and simulation tests.
-
-Please report security issues privately as described in [SECURITY.md](./SECURITY.md).
-
-## Contributing
-
-Contributions are welcome. You can experiment with new survival rules, maps, interfaces, model providers, memory systems, or social mechanics. Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request.
-
-## Creator
-
-Created and maintained by **Ahmed Bahathiq**.
-
-## License
-
-Aitopia is available under the [MIT License](./LICENSE).
+Copyright © Ahmed Bahathiq. Released under the [MIT License](./LICENSE).

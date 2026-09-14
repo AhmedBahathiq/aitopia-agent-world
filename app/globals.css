@@ -67,6 +67,9 @@ button { color: inherit; }
 .progress-track { width: 84px; height: 6px; }
 .progress-track i, .mini-track i { height: 100%; display: block; border-radius: inherit; background: linear-gradient(90deg, #e89d43, #ffe39b); }
 .stability strong { color: #f8c66e; font-size: .8rem; }
+.archive-stat { justify-content: flex-start; }
+.archive-stat svg { color: #73cbbb; }
+.archive-stat strong { color: #eef4f1; }
 
 .experience-grid { max-width: 1640px; margin: auto; display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 16px; }
 .map-panel, .event-panel { direction: rtl; border: 1px solid var(--border); border-radius: 24px; overflow: hidden; background: #0a2124d9; box-shadow: 0 24px 80px #00101266, inset 0 1px #ffffff09; }

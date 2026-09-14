@@ -1,30 +1,14 @@
-# Contributing to Aitopia
+# Contributing
 
-Thank you for helping improve Aitopia.
+Thank you for helping improve Agent World.
 
-## Development workflow
+Before opening a pull request:
 
-1. Fork the repository and create a focused branch.
-2. Install dependencies with `npm ci` in the repository root and in `worker/`.
-3. Keep simulation facts inside the deterministic engine; model output may propose actions but must never mutate state directly.
-4. Add or update tests for rule changes.
-5. Run the full verification suite before opening a pull request.
+1. Keep the public observer experience read-only and Arabic RTL compatible.
+2. Preserve the split between model proposal, deterministic resolution, and publication filtering.
+3. Never expose `WorldTruth`, secrets, database access, or real tools to simulated characters.
+4. Add a test for every change to heredity, fertility, perception, cognition, resolution, scheduling, or replay.
+5. Bump the appropriate runtime identity component for behavioral changes. Existing seasons must use a documented migration or retain their locked rules.
+6. Run the TypeScript checks, unit tests, and production build.
 
-```bash
-npm run lint
-npm run check
-npm run build
-cd worker
-npm run check
-npm test
-```
-
-## Pull requests
-
-- Explain the behavior being changed and why.
-- Keep unrelated formatting or dependency changes separate.
-- Include screenshots for visible interface changes.
-- Never commit API keys, `.env` files, `.dev.vars`, account IDs, database IDs, or signing secrets.
-- Do not expose hidden character state or private model reasoning through public APIs.
-
-By contributing, you agree that your contribution is licensed under the MIT License.
+Avoid new hard-coded civilization goals, relationship institutions, action menus, population limits, or external-human spawn paths. Observer labels may describe patterns but must never be injected into agent knowledge unless the society independently develops them.
